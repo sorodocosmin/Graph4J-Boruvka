@@ -5,6 +5,10 @@ import org.graph4j.Graph;
 import org.graph4j.util.EdgeSet;
 import org.graph4j.util.UnionFind;
 
+/**
+ * @author Sorodoc Cosmin
+ */
+
 public abstract class BoruvkaMinimumSpanningTreeBase extends MinimumSpanningTreeBase {
 
     protected final UnionFind uf;

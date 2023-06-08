@@ -107,7 +107,7 @@ public class MSTBoruvkaTest {
         double eps = 1.0E-9;
 
         for (int i = 0; i < 100; ++i) {
-            //generate a random graph with 100-1000 vertexes and a random edge probability
+            //generate a random graph with 100-1000 vertexes
             Graph randomGraph = new RandomGnpGraphGenerator(random.nextInt(900) + 100,
                     0.2)
                     .createGraph();
@@ -125,6 +125,9 @@ public class MSTBoruvkaTest {
             var mstKruskalParallel = new KruskalMinimumSpanningTree(randomGraph);
             double kruskalParallelWeight = mstKruskalParallel.getWeight();
 
+            var mstBoruvkaParallel = new BoruvkaMinimumSpanningTreeParallel(randomGraph, 2);
+            double boruvkaParallelWeight = mstBoruvkaParallel.getWeight();
+
 //            System.out.println("Prim: " + primWeight);
 //            System.out.println("Kruskal: " + kruskalWeight);
 //            System.out.println("Boruvka: " + boruvkaWeight);
@@ -132,6 +135,10 @@ public class MSTBoruvkaTest {
 
             assertTrue(Math.abs(primWeight - boruvkaWeight) < eps);
             assertTrue(Math.abs(kruskalWeight - boruvkaWeight) < eps);
+
+            assertTrue(Math.abs(boruvkaParallelWeight - boruvkaWeight) < eps);
+            assertTrue(Math.abs(kruskalParallelWeight - boruvkaParallelWeight) < eps);
+
             assertTrue(Math.abs(kruskalParallelWeight - boruvkaWeight) < eps);
 
         }

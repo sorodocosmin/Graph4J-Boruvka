@@ -34,6 +34,7 @@ public class BoruvkaMinimumSpanningTreeParallel extends BoruvkaMinimumSpanningTr
         this.nrThreads = nrThreads;
 
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nrThreads);
+
     }
 
     /**
@@ -73,19 +74,22 @@ public class BoruvkaMinimumSpanningTreeParallel extends BoruvkaMinimumSpanningTr
                     componentNode1 = uf.find(e.source());
                     componentNode2 = uf.find(e.target());
 
+
                     if (componentNode1 == componentNode2) {
                         continue;
                     }
 
-                    //synchronized (cheapest) ?? -- kinda big penalty time
-                    if (cheapest[componentNode1] == null || cheapest[componentNode1].weight() > e.weight()) {
-                        cheapest[componentNode1] = e;
-                        hasOutgoingEdges.set(true);
-                    }
+                    synchronized (cheapest) {
+                            if (cheapest[componentNode1] == null || cheapest[componentNode1].weight() > e.weight()) {
+                                cheapest[componentNode1] = e;
+                                hasOutgoingEdges.set(true);
+                            }
 
-                    if (cheapest[componentNode2] == null || cheapest[componentNode2].weight() > e.weight()) {
-                        cheapest[componentNode2] = e;
-                        hasOutgoingEdges.set(true);
+
+                            if (cheapest[componentNode2] == null || cheapest[componentNode2].weight() > e.weight()) {
+                                cheapest[componentNode2] = e;
+                                hasOutgoingEdges.set(true);
+                            }
                     }
 
                 }
@@ -93,11 +97,12 @@ public class BoruvkaMinimumSpanningTreeParallel extends BoruvkaMinimumSpanningTr
 
         }
 
-        //wait for all tasks to finish
+        //wait for all tasks to finish updating the cheapest edges
         for (Future<?> task : tasks) {
             try {
                 task.get();
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
